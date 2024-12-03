@@ -1,6 +1,6 @@
 /******************
-Name:
-ID:
+Name: Oz Pinto
+ID: 212320733
 Assignment: ex3
 *******************/
 
@@ -22,6 +22,15 @@ Assignment: ex3
 char brands[NUM_OF_BRANDS][BRANDS_NAMES] = {"Toyoga", "HyunNight", "Mazduh", "FolksVegan", "Key-Yuh"};
 char types[NUM_OF_TYPES][TYPES_NAMES] = {"SUV", "Sedan", "Coupe", "GT"};
 
+void initCube(int arr[DAYS_IN_YEAR][NUM_OF_BRANDS][NUM_OF_TYPES]) {
+    for (int i = 0; i < DAYS_IN_YEAR; i++) {
+        for (int j = 0; j < NUM_OF_BRANDS; j++) {
+            for (int k = 0; k < NUM_OF_TYPES; k++) {
+                arr[i][j][k] = -1;
+            }
+        }
+    }
+}
 
 void printMenu(){
     printf("Welcome to the Cars Data Cube! What would you like to do?\n"
@@ -34,11 +43,14 @@ void printMenu(){
            "7.exit\n");
 }
 
-
 int main() {
     int cube[DAYS_IN_YEAR][NUM_OF_BRANDS][NUM_OF_TYPES];
     int days[NUM_OF_BRANDS] = {0};
-    int choice;
+    int choice, day = 0;
+
+    //init cube to minus 1
+    initCube(cube);
+
     printMenu();
     scanf("%d", &choice);
     while(choice != done){
