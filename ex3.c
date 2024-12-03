@@ -18,6 +18,7 @@ Assignment: ex3
 #define insights  5
 #define deltas  6
 #define done  7
+#define INIT_VALUE -1
 
 char brands[NUM_OF_BRANDS][BRANDS_NAMES] = {"Toyoga", "HyunNight", "Mazduh", "FolksVegan", "Key-Yuh"};
 char types[NUM_OF_TYPES][TYPES_NAMES] = {"SUV", "Sedan", "Coupe", "GT"};
@@ -26,7 +27,7 @@ void initCube(int arr[DAYS_IN_YEAR][NUM_OF_BRANDS][NUM_OF_TYPES]) {
     for (int i = 0; i < DAYS_IN_YEAR; i++) {
         for (int j = 0; j < NUM_OF_BRANDS; j++) {
             for (int k = 0; k < NUM_OF_TYPES; k++) {
-                arr[i][j][k] = -1;
+                arr[i][j][k] = INIT_VALUE;
             }
         }
     }
@@ -34,6 +35,10 @@ void initCube(int arr[DAYS_IN_YEAR][NUM_OF_BRANDS][NUM_OF_TYPES]) {
 
 void insertBrandData(int cube[DAYS_IN_YEAR][NUM_OF_BRANDS][NUM_OF_TYPES], int current_day, int brand_index, int daily_sum[]) {
     for(int j = 0; j < NUM_OF_TYPES; j++) {
+        if(cube[current_day][brand_index][j] != INIT_VALUE) {
+            printf("This brand is not valid\n");
+            return;
+        }
         cube[current_day][brand_index][j] = daily_sum[j];
     }
 }
@@ -74,11 +79,13 @@ int main() {
     int days[NUM_OF_BRANDS] = {0};
     int choice, day = 0;
 
-    //init cube to minus 1
+    //init cube to minus 1 (INIT_VALUE)
     initCube(cube);
 
     printMenu();
+
     scanf("%d", &choice);
+
     while(choice != done){
         switch(choice){
 
@@ -86,11 +93,11 @@ int main() {
             case addOne: {
                 int brand_index, daily_sum[NUM_OF_TYPES];
 
-                //gets input accordingly
+                //get input for data insertion
                 printf("Enter brand index, 4 sales values: \n");
                 scanf(("%d %d %d %d %d"), &brand_index, &daily_sum[0], &daily_sum[1], &daily_sum[2], &daily_sum[3]);
 
-                //checks the brand number's validity
+                //check the brand number's validity
                 if(brand_index > NUM_OF_BRANDS - 1 || brand_index < 0) {
                     printf("This brand is not valid\n");
                     break;
@@ -104,7 +111,28 @@ int main() {
 
             //inserts data for all brand types
             case addAll:
+                int brand_index, daily_sum[NUM_OF_TYPES];
 
+                //get input for current day and insert it into the cube
+                while(checkIfThereIsMissingData(cube, day) == 1) {
+                    printf(("No data for brands "));
+                    printMissingDataBrands(cube, day);
+                    printf("Please complete the data\n");
+
+                    scanf(("%d %d %d %d %d"), &brand_index, &daily_sum[0], &daily_sum[1], &daily_sum[2], &daily_sum[3]);
+
+                    //check the brand number's validity
+                    if(brand_index > NUM_OF_BRANDS - 1 || brand_index < 0) {
+                        printf("This brand is not valid\n");
+                        continue;
+                    }
+
+                    //insert the data into the cube
+                    insertBrandData(cube, day, brand_index, daily_sum);
+                }
+
+                //if the data is complete for today - increase day counter by 1 and break
+                day = (day + 1) % DAYS_IN_YEAR;//completes the yearly cycle back to 0 if day reaches 365
 
                 break;
             /*
