@@ -32,6 +32,12 @@ void initCube(int arr[DAYS_IN_YEAR][NUM_OF_BRANDS][NUM_OF_TYPES]) {
     }
 }
 
+void insertBrandData(int cube[DAYS_IN_YEAR][NUM_OF_BRANDS][NUM_OF_TYPES], int current_day, int brand_index, int daily_sum[]) {
+    for(int j = 0; j < NUM_OF_TYPES; j++) {
+        cube[current_day][brand_index][j] = daily_sum[j];
+    }
+}
+
 void printMenu(){
     printf("Welcome to the Cars Data Cube! What would you like to do?\n"
            "1.Enter Daily Data For A Brand\n"
@@ -55,11 +61,31 @@ int main() {
     scanf("%d", &choice);
     while(choice != done){
         switch(choice){
-            case addOne:
-                //...
+
+            //insert daily sales data for each car type
+            case addOne: {
+                int brand_index, daily_sum[NUM_OF_TYPES];
+
+                //gets input accordingly
+                printf("Enter brand index, 4 sales values: \n");
+                scanf(("%d %d %d %d %d"), &brand_index, &daily_sum[0], &daily_sum[1], &daily_sum[2], &daily_sum[3]);
+
+                //checks the brand number's validity
+                if(brand_index > NUM_OF_BRANDS - 1 || brand_index < 0) {
+                    printf("This brand is not valid\n");
+                    break;
+                }
+
+                //insert the data into the cube
+                insertBrandData(cube, day, brand_index, daily_sum);
+
                 break;
+            }
+
+            //inserts data for all brand types
             case addAll:
-                //...
+
+
                 break;
             /*
              ......
