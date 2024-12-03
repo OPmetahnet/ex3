@@ -38,6 +38,26 @@ void insertBrandData(int cube[DAYS_IN_YEAR][NUM_OF_BRANDS][NUM_OF_TYPES], int cu
     }
 }
 
+int checkIfThereIsMissingData(int cube[DAYS_IN_YEAR][NUM_OF_BRANDS][NUM_OF_TYPES], int current_day) {
+    for(int i = 0; i < NUM_OF_BRANDS; i++) {
+        if(cube[current_day][i][0] == INIT_VALUE) return 1;
+    }
+    return 0;
+}
+
+void printMissingDataBrands(int cube[DAYS_IN_YEAR][NUM_OF_BRANDS][NUM_OF_TYPES], int current_day) {
+    /*
+     go over second dimension and see if any value has been set.
+     Then, map it to the indicator array.
+    */
+    for(int i = 0; i < NUM_OF_BRANDS; i++) {
+        if(cube[current_day][i][0] == INIT_VALUE) {
+            printf("%s ", brands[i]);
+        }
+        if(i == NUM_OF_BRANDS - 1) printf("\n");
+    }
+}
+
 void printMenu(){
     printf("Welcome to the Cars Data Cube! What would you like to do?\n"
            "1.Enter Daily Data For A Brand\n"
