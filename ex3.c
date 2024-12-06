@@ -143,6 +143,31 @@ void printMaxDailyTypeSales(int cube[][NUM_OF_BRANDS][NUM_OF_TYPES], int days, i
     printf("\n");
 }
 
+void printBrandSalesData(int cube[][NUM_OF_BRANDS][NUM_OF_TYPES], int days, int brands, int types, int brand_to_check, int current_day) {
+    for(int i = 0; i < current_day; i++) {
+        printf("Day %d- ", i + 1);
+        for(int j = 0; j < types; j++) {
+            printTypeName(j);
+            printf(": %d ", cube[i][brand_to_check][j]);
+        }
+        printf("\n");
+    }
+}
+
+void printAllSalesData(int cube[][NUM_OF_BRANDS][NUM_OF_TYPES], int days, int brands, int types, int current_day) {
+    printf("*****************************************\n\n");
+
+    //prints all data by brand
+    for(int i = 0; i < brands; i++) {
+        printf("Sales for ");
+        printBrandName(i);
+        printf(":\n");
+        printBrandSalesData(cube, days, brands, types, i, current_day);
+    }
+
+    printf("*****************************************\n");
+}
+
 void printMenu(){
     printf("Welcome to the Cars Data Cube! What would you like to do?\n"
            "1.Enter Daily Data For A Brand\n"
@@ -253,7 +278,16 @@ int main() {
                 break;
             }
 
-            default:
+            /*
+                print the data cube information day by day for every day that has sales data
+            */
+            case print: {
+                printAllSalesData(cube, DAYS_IN_YEAR, NUM_OF_BRANDS, NUM_OF_TYPES, day);
+
+                break;
+            }
+
+            default: {
                 printf("Invalid input\n");
 
                 break;
