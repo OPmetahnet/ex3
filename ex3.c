@@ -50,6 +50,14 @@ int checkIfThereIsMissingData(int cube[][NUM_OF_BRANDS][NUM_OF_TYPES], int days,
     return 0;
 }
 
+void printBrandName(int index) {
+    printf("%s", brands[index]);
+}
+
+void printTypeName(int index) {
+    printf("%s", types[index]);
+}
+
 void printMissingDataBrands(int cube[][NUM_OF_BRANDS][NUM_OF_TYPES], int days, int brands, int types, int current_day) {
     /*
      go over second dimension and see if any value has been set.
@@ -57,10 +65,82 @@ void printMissingDataBrands(int cube[][NUM_OF_BRANDS][NUM_OF_TYPES], int days, i
     */
     for(int i = 0; i < brands; i++) {
         if(cube[current_day][i][0] == INIT_VALUE) {
-        if(i == brands - 1) printf("\n");
+            printBrandName(i);
+            printf(" ");
         }
-        if(i == NUM_OF_BRANDS - 1) printf("\n");
+        if(i == brands - 1) printf("\n");
     }
+}
+
+int calculateDailySum(int cube[][NUM_OF_BRANDS][NUM_OF_TYPES], int days, int brands, int types, int day_to_check) {
+    int total_sum = 0;
+
+    //sums each sale number into a grand total
+    for(int i = 0; i < brands; i++) {
+        for(int j = 0; j < types; j++) {
+            total_sum += cube[day_to_check][i][j];
+        }
+    }
+
+    return total_sum;
+}
+
+void printMaxDailyBrandSales(int cube[][NUM_OF_BRANDS][NUM_OF_TYPES], int days, int brands, int types, int day_to_check) {
+    int daily_brand_sales[brands];
+    int max_daily_brand_sales = 0, max_daily_brand_sales_index = 0;
+
+    //init brand sales array with zeroes
+    for(int i = 0; i < brands; i++) {
+        daily_brand_sales[i] = 0;
+    }
+
+    //sum sales for each brand and store them in a matching index
+    for(int i = 0; i < brands; i++) {
+        for(int j = 0; j < types; j++) {
+            daily_brand_sales[i] += cube[day_to_check][i][j];
+        }
+
+        //comparison to find the max sales value of the day per brand
+        if(max_daily_brand_sales < daily_brand_sales[i]) {
+            max_daily_brand_sales = daily_brand_sales[i];
+            max_daily_brand_sales_index = i;
+        }
+    }
+
+    //prints the data results
+    printf("The best sold brand with %d sales was ", max_daily_brand_sales);
+    printBrandName(max_daily_brand_sales_index);
+    printf("\n");
+}
+
+void printMaxDailyTypeSales(int cube[][NUM_OF_BRANDS][NUM_OF_TYPES], int days, int brands, int types, int day_to_check) {
+    int daily_type_sales[types];
+    int max_daily_type_sales = 0, max_daily_type_sales_index = 0;
+
+    //init type sales array with zeroes
+    for(int i = 0; i < types; i++) {
+        daily_type_sales[i] = 0;
+    }
+
+    //sum all type sales together into the daily type sales array
+    for(int i = 0; i < brands; i++) {
+        for(int j = 0; j < types; j++) {
+            daily_type_sales[j] += cube[day_to_check][i][j];
+        }
+    }
+
+    //find the max amount of daily sales by type
+    for (int i = 0; i < types; i++) {
+        if(max_daily_type_sales < daily_type_sales[i]) {
+            max_daily_type_sales = daily_type_sales[i];
+            max_daily_type_sales_index = i;
+        }
+    }
+
+    //prints the data results
+    printf("The best sold type with %d sales was ", max_daily_type_sales);
+    printTypeName(max_daily_type_sales_index);
+    printf("\n");
 }
 
 void printMenu(){
@@ -143,7 +223,32 @@ int main() {
 
             /*
                 prints daily sales statistics for a given day number
-             */
+           */
+            case stats: {
+                int day_to_analyze = 0, daily_sales_sum;
+
+                printf("What day would you like to analyze?\n");
+                scanf("%d", &day_to_analyze);
+
+                //get input until it's a number between 0 and 364(options for a day of the year)
+                while(day_to_analyze > DAYS_IN_YEAR + 1 || day_to_analyze < 1) {
+                    printf("Please enter a valid day.\n"
+                           "What day would you like to analyze?\n");
+                    scanf("%d", &day_to_analyze);
+                }
+
+                daily_sales_sum = calculateDailySum(cube, DAYS_IN_YEAR, NUM_OF_BRANDS, NUM_OF_TYPES, day_to_analyze - 1);
+
+                //print the results
+                printf("In day number %d:\n"
+                       "The sales total was %d\n"
+                       ,day_to_analyze, daily_sales_sum);
+                printMaxDailyBrandSales(cube, DAYS_IN_YEAR, NUM_OF_BRANDS, NUM_OF_TYPES, day_to_analyze - 1);
+                printMaxDailyTypeSales(cube, DAYS_IN_YEAR, NUM_OF_BRANDS, NUM_OF_TYPES, day_to_analyze - 1);
+
+                break;
+            }
+
             default:
                 printf("Invalid input\n");
         }
