@@ -197,7 +197,11 @@ int main() {
             case addAll: {
                 int brand_index, daily_sum[NUM_OF_TYPES];
 
-                //get input for current day and insert it into the cube
+                //if data already exists
+                if(checkIfThereIsMissingData(cube, DAYS_IN_YEAR, NUM_OF_BRANDS, NUM_OF_TYPES, day) == 0)
+                    break;
+
+                //get input for current day and insert it into the cube until its complete
                 while(checkIfThereIsMissingData(cube, DAYS_IN_YEAR, NUM_OF_BRANDS, NUM_OF_TYPES, day) == 1) {
                     printf(("No data for brands "));
                     printMissingDataBrands(cube, DAYS_IN_YEAR, NUM_OF_BRANDS, NUM_OF_TYPES, day);
@@ -216,7 +220,7 @@ int main() {
                 }
 
                 //if the data is complete for today - increase day counter by 1 and break
-                day = (day + 1) % DAYS_IN_YEAR;//completes the yearly cycle back to 0 if day reaches 365
+                day++;
 
                 break;
             }
@@ -230,8 +234,8 @@ int main() {
                 printf("What day would you like to analyze?\n");
                 scanf("%d", &day_to_analyze);
 
-                //get input until it's a number between 0 and 364(options for a day of the year)
-                while(day_to_analyze > DAYS_IN_YEAR + 1 || day_to_analyze < 1) {
+                //get input until it's a number between 1 and 365(options for a day of the year)
+                while(day_to_analyze > day || day_to_analyze < 1) {
                     printf("Please enter a valid day.\n"
                            "What day would you like to analyze?\n");
                     scanf("%d", &day_to_analyze);
@@ -251,6 +255,9 @@ int main() {
 
             default:
                 printf("Invalid input\n");
+
+                break;
+            }
         }
         printMenu();
         scanf("%d", &choice);
