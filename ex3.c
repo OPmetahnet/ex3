@@ -23,18 +23,18 @@ Assignment: ex3
 char brands[NUM_OF_BRANDS][BRANDS_NAMES] = {"Toyoga", "HyunNight", "Mazduh", "FolksVegan", "Key-Yuh"};
 char types[NUM_OF_TYPES][TYPES_NAMES] = {"SUV", "Sedan", "Coupe", "GT"};
 
-void initCube(int arr[DAYS_IN_YEAR][NUM_OF_BRANDS][NUM_OF_TYPES]) {
-    for (int i = 0; i < DAYS_IN_YEAR; i++) {
-        for (int j = 0; j < NUM_OF_BRANDS; j++) {
-            for (int k = 0; k < NUM_OF_TYPES; k++) {
-                arr[i][j][k] = INIT_VALUE;
+void initCube(int cube[][NUM_OF_BRANDS][NUM_OF_TYPES], int days, int brands, int types) {
+    for (int i = 0; i < days; i++) {
+        for (int j = 0; j < brands; j++) {
+            for (int k = 0; k < types; k++) {
+                cube[i][j][k] = INIT_VALUE;
             }
         }
     }
 }
 
-void insertBrandData(int cube[DAYS_IN_YEAR][NUM_OF_BRANDS][NUM_OF_TYPES], int current_day, int brand_index, int daily_sum[]) {
-    for(int j = 0; j < NUM_OF_TYPES; j++) {
+void insertBrandData(int cube[][NUM_OF_BRANDS][NUM_OF_TYPES], int days, int brands, int types, int current_day, int brand_index, int daily_sum[]) {
+    for(int j = 0; j < types; j++) {
         if(cube[current_day][brand_index][j] != INIT_VALUE) {
             printf("This brand is not valid\n");
             return;
@@ -43,21 +43,21 @@ void insertBrandData(int cube[DAYS_IN_YEAR][NUM_OF_BRANDS][NUM_OF_TYPES], int cu
     }
 }
 
-int checkIfThereIsMissingData(int cube[DAYS_IN_YEAR][NUM_OF_BRANDS][NUM_OF_TYPES], int current_day) {
-    for(int i = 0; i < NUM_OF_BRANDS; i++) {
+int checkIfThereIsMissingData(int cube[][NUM_OF_BRANDS][NUM_OF_TYPES], int days, int brands, int types, int current_day) {
+    for(int i = 0; i < brands; i++) {
         if(cube[current_day][i][0] == INIT_VALUE) return 1;
     }
     return 0;
 }
 
-void printMissingDataBrands(int cube[DAYS_IN_YEAR][NUM_OF_BRANDS][NUM_OF_TYPES], int current_day) {
+void printMissingDataBrands(int cube[][NUM_OF_BRANDS][NUM_OF_TYPES], int days, int brands, int types, int current_day) {
     /*
      go over second dimension and see if any value has been set.
      Then, map it to the indicator array.
     */
-    for(int i = 0; i < NUM_OF_BRANDS; i++) {
+    for(int i = 0; i < brands; i++) {
         if(cube[current_day][i][0] == INIT_VALUE) {
-            printf("%s ", brands[i]);
+        if(i == brands - 1) printf("\n");
         }
         if(i == NUM_OF_BRANDS - 1) printf("\n");
     }
@@ -80,7 +80,7 @@ int main() {
     int choice, day = 0;
 
     //init cube to minus 1 (INIT_VALUE)
-    initCube(cube);
+    initCube(cube, DAYS_IN_YEAR, NUM_OF_BRANDS, NUM_OF_TYPES);
 
     printMenu();
 
@@ -89,7 +89,9 @@ int main() {
     while(choice != done){
         switch(choice){
 
-            //insert daily sales data for each car type
+            /*
+             insert daily sales data for each car type
+            */
             case addOne: {
                 int brand_index, daily_sum[NUM_OF_TYPES];
 
@@ -104,19 +106,21 @@ int main() {
                 }
 
                 //insert the data into the cube
-                insertBrandData(cube, day, brand_index, daily_sum);
+                insertBrandData(cube, DAYS_IN_YEAR, NUM_OF_BRANDS, NUM_OF_TYPES ,day, brand_index, daily_sum);
 
                 break;
             }
 
-            //inserts data for all brand types
-            case addAll:
+            /*
+             inserts data for all brand types
+            */
+            case addAll: {
                 int brand_index, daily_sum[NUM_OF_TYPES];
 
                 //get input for current day and insert it into the cube
-                while(checkIfThereIsMissingData(cube, day) == 1) {
+                while(checkIfThereIsMissingData(cube, DAYS_IN_YEAR, NUM_OF_BRANDS, NUM_OF_TYPES, day) == 1) {
                     printf(("No data for brands "));
-                    printMissingDataBrands(cube, day);
+                    printMissingDataBrands(cube, DAYS_IN_YEAR, NUM_OF_BRANDS, NUM_OF_TYPES, day);
                     printf("Please complete the data\n");
 
                     scanf(("%d %d %d %d %d"), &brand_index, &daily_sum[0], &daily_sum[1], &daily_sum[2], &daily_sum[3]);
@@ -128,15 +132,17 @@ int main() {
                     }
 
                     //insert the data into the cube
-                    insertBrandData(cube, day, brand_index, daily_sum);
+                    insertBrandData(cube, DAYS_IN_YEAR, NUM_OF_BRANDS, NUM_OF_TYPES, day, brand_index, daily_sum);
                 }
 
                 //if the data is complete for today - increase day counter by 1 and break
                 day = (day + 1) % DAYS_IN_YEAR;//completes the yearly cycle back to 0 if day reaches 365
 
                 break;
+            }
+
             /*
-             ......
+                prints daily sales statistics for a given day number
              */
             default:
                 printf("Invalid input\n");
