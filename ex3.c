@@ -264,6 +264,34 @@ void printMenu(){
            "7.exit\n");
 }
 
+int findMostProfitableDay(int cube[][5][4], int brands, int types, int day) {
+    int most_profitable_day = 0, max_daily_revenue = 0;
+
+    for(int i = 0; i < day; i++) {
+        int today_sum = calculateDailySum(cube, brands, types, i);
+
+        if(max_daily_revenue < today_sum) {
+            most_profitable_day = i;
+        }
+    }
+
+    return most_profitable_day;
+}
+
+int findHighestDailyProfit(int cube[][NUM_OF_BRANDS][NUM_OF_TYPES], int brands, int types, int day) {
+    int max_daily_revenue = 0;
+
+    for(int i = 0; i < day; i++) {
+        int today_sum = calculateDailySum(cube, brands, types, i);
+
+        if(max_daily_revenue < today_sum) {
+            max_daily_revenue = today_sum;
+        }
+    }
+
+    return max_daily_revenue;
+}
+
 int main() {
     int cube[DAYS_IN_YEAR][NUM_OF_BRANDS][NUM_OF_TYPES];
     // int days[NUM_OF_BRANDS] = {0};
@@ -385,6 +413,38 @@ int main() {
             */
             case print: {
                 printAllSalesData(cube, NUM_OF_BRANDS, NUM_OF_TYPES, day);
+
+                break;
+            }
+
+            /*
+             provide business insights about the sales data
+            */
+            case insights: {
+                //find the most profitable day
+                int most_profitable_day = findMostProfitableDay(cube, NUM_OF_BRANDS, NUM_OF_TYPES, day);
+                int highest_daily_profit = findHighestDailyProfit(cube, NUM_OF_BRANDS, NUM_OF_TYPES, day);
+
+                //find the highest selling brand
+                int max_sales_brand_index = findHighestSellingBrandOfDayRange(cube, NUM_OF_BRANDS, NUM_OF_TYPES, 0, day - 1);
+                int max_sales_brand = findHighestBrandSalesOfDayRange(cube, NUM_OF_BRANDS, NUM_OF_TYPES, 0, day - 1);
+
+                //find the highest selling type
+                int max_sales_type_index = findHighestSellingTypeOfDayRange(cube, NUM_OF_BRANDS, NUM_OF_TYPES, 0, day - 1);
+                int max_sales_type = findHighestTypeSalesOfDayRange(cube, NUM_OF_BRANDS, NUM_OF_TYPES, 0, day - 1);
+
+                //print most sold brand overall
+                printf("The best-selling brand overall is ");
+                printBrandName(max_sales_brand_index);
+                printf(": %d$\n", max_sales_brand);
+
+                //print most sold type overall
+                printf("The best-selling type of car is ");
+                printTypeName(max_sales_type_index);
+                printf(": %d$\n", max_sales_type);
+
+                //print most profitable day
+                printf("The most profitable day was day number %d: %d$\n", most_profitable_day - 1, highest_daily_profit);
 
                 break;
             }
