@@ -238,19 +238,20 @@ int findHighestTypeSalesOfDayRange(int cube[][NUM_OF_BRANDS][NUM_OF_TYPES], int 
     return max_type_sales;
 }
 
+//calculates the delta metric value of a given brand
+float calculateBrandDeltaValue(int cube[][NUM_OF_BRANDS][NUM_OF_TYPES], int brand_to_check, int current_day) {
+    float delta_value = 0;
 
-void printAllSalesData(int cube[][NUM_OF_BRANDS][NUM_OF_TYPES], int days, int brands, int types, int current_day) {
-    printf("*****************************************\n\n");
-
-    //prints all data by brand
-    for(int i = 0; i < brands; i++) {
-        printf("Sales for ");
-        printBrandName(i);
-        printf(":\n");
-        printBrandSalesData(cube, days, brands, types, i, current_day);
+    //run through all days until current day and calculate the delta sum for the brand
+    for(int j = 1; j < current_day; j++) {
+        for(int k = 0; k < NUM_OF_TYPES; k++) {
+            //take the difference between each day and the day before it and add to delta
+            delta_value += (float)cube[j][brand_to_check][k] - (float)cube[j - 1][brand_to_check][k];
+        }
     }
+    delta_value /= (float)current_day - 1;//completing the formula calculation
 
-    printf("*****************************************\n");
+    return delta_value;
 }
 
 void printMenu(){
@@ -449,7 +450,24 @@ int main() {
                 break;
             }
 
-                printAllSalesData(cube, DAYS_IN_YEAR, NUM_OF_BRANDS, NUM_OF_TYPES, day);
+            /*
+             calculate and print the delta metric for each brand's sales independently
+            */
+            case deltas: {
+                float delta = 0;
+
+                //run for each brand and go through all days with data
+                for(int i = 0; i < NUM_OF_BRANDS; i++) {
+                    delta = calculateBrandDeltaValue(cube, i, day);
+
+                    //print data for user before next iteration
+                    printf("Brand: ");
+                    printBrandName(i);
+                    printf(", Average Delta: %f\n", delta);
+
+                    //reset before next iteration
+                    delta = 0;
+                }
 
                 break;
             }
